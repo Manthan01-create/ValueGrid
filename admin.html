@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ValueGrid — Admin Panel</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { padding: 40px var(--space-xl); background: var(--bg-secondary); }
+    .admin-container { max-width: 1100px; margin: 0 auto; }
+    .admin-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .admin-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: var(--space-xl); margin-bottom: 30px; box-shadow: var(--shadow-md); }
+    .admin-table { width: 100%; border-collapse: collapse; text-align: left; }
+    .admin-table th, .admin-table td { padding: 12px 16px; border-bottom: 1px solid var(--border-color); font-size: var(--fs-sm); }
+    .admin-table th { background: var(--bg-tertiary); font-weight: 700; color: var(--text-primary); }
+    .badge { padding: 4px 8px; border-radius: var(--radius-full); font-size: var(--fs-xs); font-weight: 600; }
+    .badge-success { background: #d4edda; color: #155724; }
+    .badge-danger { background: #f8d7da; color: #721c24; }
+    .star-display { color: var(--accent); letter-spacing: 2px; }
+
+    .btn-sm {
+      padding: 4px 10px; font-size: 12px; border-radius: 6px; cursor: pointer;
+      border: 1px solid var(--border-color); background: var(--bg-input);
+      color: var(--text-primary); margin-right: 4px;
+    }
+    .btn-sm:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .btn-sm.del { color: var(--danger); border-color: var(--danger); }
+    .btn-sm.del:hover { background: var(--danger); color: #fff; }
+
+    .modal-bg {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none;
+      align-items: center; justify-content: center; z-index: 9999;
+      backdrop-filter: blur(4px);
+    }
+    .modal-bg.active { display: flex; }
+    .modal-box {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg); padding: 24px; width: 420px; max-width: 90vw;
+    }
+    .modal-box h3 { margin: 0 0 16px 0; color: var(--text-primary); }
+    .modal-box label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+    .modal-box input, .modal-box textarea, .modal-box select {
+      width: 100%; padding: 8px 12px; margin-bottom: 14px;
+      border: 1px solid var(--border-color); border-radius: 6px;
+      background: var(--bg-input); color: var(--text-primary);
+      font-size: 14px; font-family: inherit;
+    }
+    .modal-box textarea { resize: vertical; min-height: 60px; }
+    .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="admin-container">
+    <div class="admin-header">
+      <h2>🛡️ ValueGrid Database Admin Panel</h2>
+      <a href="/" class="btn btn-outline">Back to Website</a>
+    </div>
+
+    <div class="admin-card">
+      <h3>Registered Users</h3>
+      <br />
+      <table class="admin-table" id="usersTable">
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="admin-card">
+      <h3>Stored Logins Activity</h3>
+      <br />
+      <table class="admin-table" id="loginsTable">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Email</th>
+            <th>IP Address</th>
+            <th>Status</th>
+            <th style="text-align:center;">Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div style="text-align:right;margin-top:12px;">
+        <button class="btn-sm del" onclick="clearAllLogins()">Clear All History</button>
+      </div>
+    </div>
+
+    <div class="admin-card">
+      <h3>Customer Reviews</h3>
+      <br />
+      <table class="admin-table" id="reviewsTable">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Rating</th>
+            <th>Review</th>
+            <th>Date</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Edit Review Modal -->
+  <div class="modal-bg" id="editModal">
+    <div class="modal-box">
+      <h3>✏️ Edit Review</h3>
+      <input type="hidden" id="editId">
+      <label for="editName">Name</label>
+      <input type="text" id="editName">
+      <label for="editRating">Rating (1-5)</label>
+      <select id="editRating">
+        <option value="1">★</option>
+        <option value="2">★★</option>
+        <option value="3">★★★</option>
+        <option value="4">★★★★</option>
+        <option value="5">★★★★★</option>
+      </select>
+      <label for="editText">Review Text</label>
+      <textarea id="editText" rows="3"></textarea>
+      <div class="modal-actions">
+        <button class="btn-sm" onclick="closeModal()">Cancel</button>
+        <button class="btn-sm" onclick="saveEdit()" style="background:var(--primary);color:#fff;">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let editingId = null;
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = String(str ?? '');
+      return div.innerHTML;
+    }
+
+    async function loadAdminData() {
+      try {
+        const res = await fetch('/api/admin/data');
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+
+        const uTbody = document.querySelector('#usersTable tbody');
+        uTbody.innerHTML = data.users.length ? data.users.map(u => `
+          <tr>
+            <td><code>${escapeHtml(u.id)}</code></td>
+            <td>${escapeHtml(u.name)}</td>
+            <td>${escapeHtml(u.email)}</td>
+            <td>${new Date(u.createdAt).toLocaleString()}</td>
+          </tr>`).join('') : '<tr><td colspan="4">No users registered yet.</td></tr>';
+
+        const lTbody = document.querySelector('#loginsTable tbody');
+        lTbody.innerHTML = data.logins.length ? data.logins.map((l, i) => `
+          <tr>
+            <td>${new Date(l.timestamp).toLocaleString()}</td>
+            <td>${escapeHtml(l.email)}</td>
+            <td>${escapeHtml(l.ip)}</td>
+            <td><span class="badge badge-success">${escapeHtml(l.status)}</span></td>
+            <td style="text-align:center;"><button class="btn-sm del" onclick="deleteLogin(${i})">Delete</button></td>
+          </tr>`).join('') : '<tr><td colspan="5">No login history recorded yet.</td></tr>';
+
+        const rTbody = document.querySelector('#reviewsTable tbody');
+        rTbody.innerHTML = data.reviews.length ? data.reviews.map(r => `
+          <tr>
+            <td>${escapeHtml(r.name)}</td>
+            <td><span class="star-display">${'★'.repeat(r.rating)}${'☆'.repeat(5 - r.rating)}</span></td>
+            <td>${escapeHtml(r.text)}</td>
+            <td>${new Date(r.date).toLocaleDateString()}</td>
+            <td>
+              <button class="btn-sm" onclick='openEdit(${JSON.stringify({ id: r.id, name: r.name, rating: r.rating, text: r.text }).replace(/'/g, "&#39;")})'>Edit</button>
+              <button class="btn-sm del" onclick="deleteReview('${r.id}')">Delete</button>
+            </td>
+          </tr>`).join('') : '<tr><td colspan="5">No reviews submitted yet.</td></tr>';
+      } catch (err) {
+        console.error('Failed to load admin data:', err);
+      }
+    }
+
+    function openEdit(review) {
+      editingId = review.id;
+      document.getElementById('editName').value = review.name;
+      document.getElementById('editRating').value = review.rating;
+      document.getElementById('editText').value = review.text;
+      document.getElementById('editModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('editModal').classList.remove('active');
+      editingId = null;
+    }
+
+    async function saveEdit() {
+      const payload = {
+        name: document.getElementById('editName').value.trim(),
+        rating: parseInt(document.getElementById('editRating').value, 10),
+        text: document.getElementById('editText').value.trim()
+      };
+      if (!payload.name || !payload.text) {
+        alert('Name and review text are required.');
+        return;
+      }
+      try {
+        const res = await fetch(`/api/reviews/${editingId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        if (!res.ok) throw new Error('Update failed');
+        closeModal();
+        loadAdminData();
+      } catch (err) {
+        console.error(err);
+        alert('Failed to save changes.');
+      }
+    }
+
+    async function deleteReview(id) {
+      if (!confirm('Delete this review permanently?')) return;
+      try {
+        const res = await fetch(`/api/reviews/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Delete failed');
+        loadAdminData();
+      } catch (err) {
+        console.error(err);
+        alert('Failed to delete review.');
+      }
+    }
+
+    async function deleteLogin(index) {
+      if (!confirm('Delete this login entry?')) return;
+      try {
+        const res = await fetch(`/api/logins/${index}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Delete failed');
+        loadAdminData();
+      } catch (err) {
+        console.error(err);
+        alert('Failed to delete login entry.');
+      }
+    }
+
+    async function clearAllLogins() {
+      if (!confirm('Clear ALL login history? This cannot be undone.')) return;
+      try {
+        const res = await fetch('/api/logins', { method: 'DELETE' });
+        if (!res.ok) throw new Error('Clear failed');
+        loadAdminData();
+      } catch (err) {
+        console.error(err);
+        alert('Failed to clear login history.');
+      }
+    }
+
+    document.getElementById('editModal').addEventListener('click', e => {
+      if (e.target.id === 'editModal') closeModal();
+    });
+
+    loadAdminData();
+    setInterval(loadAdminData, 5000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ValueGrid — Digital Solutions for Local Businesses</title>
+  <meta name="description" content="ValueGrid helps small businesses grow by bringing them online through affordable and practical digital solutions.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header class="header" id="header">
+    <div class="header-inner">
+      <a href="#home" class="logo" aria-label="ValueGrid Home">
+        <img src="logo-light.png" alt="ValueGrid" class="logo-img logo-img-light">
+        <img src="logo-dark.png" alt="ValueGrid" class="logo-img logo-img-dark">
+      </a>
+
+      <nav class="nav" id="mainNav" aria-label="Main navigation">
+        <a href="#home" class="nav-link active" data-section="home">Home</a>
+        <a href="#plans" class="nav-link" data-section="plans">Our Plans</a>
+        <a href="#dashboard-section" class="nav-link nav-dashboard-link" data-section="dashboard-section" style="display:none;">Dashboard</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <span class="theme-icon sun-icon">☀️</span>
+          <span class="theme-icon moon-icon">🌙</span>
+        </button>
+
+        <div class="auth-buttons" id="authButtons">
+          <button class="btn btn-outline" id="loginBtn">Login</button>
+          <button class="btn btn-primary" id="signupBtn">Sign Up</button>
+        </div>
+
+        <div class="user-menu" id="userMenu" style="display:none;">
+          <button class="user-avatar-btn" id="userAvatarBtn" aria-label="Dashboard menu">
+            <span class="user-avatar" id="userAvatar">U</span>
+          </button>
+          <div class="user-dropdown" id="userDropdown">
+            <div class="dropdown-user-info">
+              <span class="dropdown-name" id="dropdownName">User</span>
+              <span class="dropdown-email" id="dropdownEmail">user@email.com</span>
+            </div>
+            <hr class="dropdown-divider">
+            <button class="dropdown-item" id="dashboardBtn">My Profile</button>
+            <button class="dropdown-item dropdown-logout" id="logoutBtn">Logout</button>
+          </div>
+        </div>
+
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== MOBILE NAV ========== -->
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#home" class="mobile-nav-link active" data-section="home">Home</a>
+    <a href="#plans" class="mobile-nav-link" data-section="plans">Our Plans</a>
+    <a href="#dashboard-section" class="mobile-nav-link mobile-dashboard-link" data-section="dashboard-section" style="display:none;">Dashboard</a>
+    <div class="mobile-auth-buttons" id="mobileAuthButtons">
+      <button class="btn btn-outline btn-full" id="mobileLoginBtn">Login</button>
+      <button class="btn btn-primary btn-full" id="mobileSignupBtn">Sign Up</button>
+    </div>
+    <div class="mobile-user-actions" id="mobileUserActions" style="display:none;">
+      <button class="btn btn-outline btn-full" id="mobileLogoutBtn">Logout</button>
+    </div>
+  </div>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main>
+
+    <!-- HERO SECTION -->
+    <section class="hero" id="home">
+      <div class="hero-content">
+        <h1 class="hero-quote fade-in">
+          <span class="quote-dim">We work so that your neighborhood auntie shouldn't be the only one</span>
+          <span class="quote-highlight">talking about your business.</span>
+        </h1>
+        <p class="hero-sub fade-in delay-1">
+          Affordable digital solutions to take your local business online and grow your customer base.
+        </p>
+      </div>
+      <div class="hero-bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+    </section>
+
+    <!-- ADVISOR CTA -->
+    <section class="advisor-cta scroll-reveal" id="advisorCta">
+      <div class="container">
+        <div class="cta-box">
+          <h2 class="cta-headline">CONNECT WITH ADVISOR NOW</h2>
+          <p class="cta-sub">Talk to our business advisor and discover how we can help your business grow online.</p>
+          <a href="tel:PLACEHOLDER_PHONE_NUMBER" class="btn btn-primary btn-lg" id="advisorConnectBtn">
+            <span>📞</span> Connect
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEATURES SECTION -->
+    <section class="features scroll-reveal" id="features">
+      <div class="container">
+        <h2 class="section-title">ALL THE FEATURES DONE RIGHT</h2>
+        <p class="section-subtitle">Everything your business needs to succeed online — delivered affordably and professionally.</p>
+        <div class="features-grid" id="featuresGrid"></div>
+        <div class="additional-service scroll-reveal">
+          <div class="additional-card">
+            <span class="additional-icon">🚀</span>
+            <h3>Marketing & Customer Growth</h3>
+            <p>We also help businesses with marketing strategies and improving customer incoming.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REVIEWS SECTION -->
+    <section class="reviews scroll-reveal" id="reviews">
+      <div class="container">
+        <h2 class="section-title">OUR REVIEWS</h2>
+        <p class="section-subtitle">See what our clients say about working with ValueGrid.</p>
+        <div class="reviews-container" id="reviewsContainer"></div>
+        <div class="reviews-actions">
+          <button class="btn btn-primary" id="addReviewBtn">Add Rating & Review</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="about scroll-reveal" id="about">
+      <div class="container">
+        <div class="about-content">
+          <h2 class="section-title">ABOUT VALUEGRID</h2>
+          <p class="about-text">ValueGrid helps small businesses grow by bringing them online through affordable and practical digital solutions. We help local businesses, cafes, restaurants, and other offline businesses build their digital presence, reach more customers, and compete in today's online world without spending unnecessarily.</p>
+          <div class="about-stats">
+            <div class="stat-item"><span class="stat-number">50+</span><span class="stat-label">Businesses Served</span></div>
+            <div class="stat-item"><span class="stat-number">100%</span><span class="stat-label">Client Satisfaction</span></div>
+            <div class="stat-item"><span class="stat-number">24/7</span><span class="stat-label">Support Available</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLANS SECTION -->
+    <section class="plans scroll-reveal" id="plans">
+      <div class="container">
+        <h2 class="section-title">OUR PLANS</h2>
+        <p class="section-subtitle">Budget-friendly packages designed for small businesses. Plans coming soon.</p>
+        <div class="plans-grid">
+          <div class="plan-card">
+            <div class="plan-badge">Coming Soon</div>
+            <h3 class="plan-name">Starter</h3>
+            <div class="plan-price"><span class="price-currency">₹</span>___<span class="price-period">/mo</span></div>
+            <ul class="plan-features"><li>Basic Website</li><li>Google Business Profile</li><li>Social Media Setup</li><li>Basic SEO</li></ul>
+            <button class="btn btn-outline btn-full plan-cta" disabled>Coming Soon</button>
+          </div>
+          <div class="plan-card plan-featured">
+            <div class="plan-badge popular">Most Popular</div>
+            <h3 class="plan-name">Growth</h3>
+            <div class="plan-price"><span class="price-currency">₹</span>___<span class="price-period">/mo</span></div>
+            <ul class="plan-features"><li>Professional Website</li><li>Mobile-Friendly Design</li><li>Online Ordering</li><li>Payment Integration</li><li>SEO + Marketing</li></ul>
+            <button class="btn btn-primary btn-full plan-cta" disabled>Coming Soon</button>
+          </div>
+          <div class="plan-card">
+            <div class="plan-badge">Coming Soon</div>
+            <h3 class="plan-name">Premium</h3>
+            <div class="plan-price"><span class="price-currency">₹</span>___<span class="price-period">/mo</span></div>
+            <ul class="plan-features"><li>Everything in Growth</li><li>Custom Features</li><li>Priority Support</li><li>Monthly Analytics</li><li>Dedicated Advisor</li></ul>
+            <button class="btn btn-outline btn-full plan-cta" disabled>Coming Soon</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PORTFOLIO SECTION -->
+    <section class="portfolio scroll-reveal" id="portfolio">
+      <div class="container">
+        <h2 class="section-title">OUR WORK</h2>
+        <p class="section-subtitle">A showcase of projects we've delivered for our clients.</p>
+        <div class="portfolio-grid">
+          <div class="portfolio-card placeholder-card"><div class="portfolio-placeholder"><span class="placeholder-icon">📸</span><p>Project showcase coming soon</p></div></div>
+          <div class="portfolio-card placeholder-card"><div class="portfolio-placeholder"><span class="placeholder-icon">🌐</span><p>Client website coming soon</p></div></div>
+          <div class="portfolio-card placeholder-card"><div class="portfolio-placeholder"><span class="placeholder-icon">📱</span><p>Mobile project coming soon</p></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD SECTION -->
+    <section class="dashboard-section" id="dashboard-section" style="display:none;">
+      <div class="container">
+        <div class="dashboard-card">
+          <h2 class="dashboard-title">My Profile</h2>
+          <div class="profile-content">
+            <div class="profile-header">
+              <div class="profile-avatar-large" id="profileAvatar">U</div>
+              <div class="profile-basic">
+                <h3 class="profile-name" id="profileName">User</h3>
+                <p class="profile-email" id="profileEmail">user@email.com</p>
+              </div>
+            </div>
+            <div class="profile-details">
+              <div class="profile-field"><label>Full Name</label><span id="profileFullName">—</span></div>
+              <div class="profile-field"><label>Email</label><span id="profileDetailEmail">—</span></div>
+              <div class="profile-field"><label>Phone Number</label><span id="profilePhone">—</span></div>
+              <div class="profile-field"><label>Business Name</label><span id="profileBusiness">—</span></div>
+              <div class="profile-field"><label>Business Type</label><span id="profileBusinessType">—</span></div>
+              <div class="profile-field"><label>Location</label><span id="profileLocation">—</span></div>
+              <div class="profile-field"><label>Account Created</label><span id="profileCreated">—</span></div>
+            </div>
+            <button class="btn btn-danger" id="dashboardLogoutBtn">Logout</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer" id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <img src="logo-light.png" alt="ValueGrid" class="logo-img logo-img-light">
+            <img src="logo-dark.png" alt="ValueGrid" class="logo-img logo-img-dark">
+          </div>
+          <p class="footer-desc">Affordable digital solutions to take your local business online and grow your customer base.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Navigation</h4>
+          <a href="#home">Home</a><a href="#plans">Our Plans</a><a href="#features">Features</a><a href="#reviews">Reviews</a><a href="#about">About</a>
+        </div>
+        <div class="footer-contact">
+          <h4>Contact</h4>
+          <a href="tel:PLACEHOLDER_PHONE_NUMBER">📞 Phone</a>
+          <a href="mailto:PLACEHOLDER_SUPPORT_EMAIL">✉️ Email</a>
+        </div>
+        <div class="footer-social">
+          <h4>Follow Us</h4>
+          <div class="social-links">
+            <a href="PLACEHOLDER_WHATSAPP_LINK" class="social-link" target="_blank" rel="noopener" aria-label="WhatsApp">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            </a>
+            <a href="PLACEHOLDER_INSTAGRAM_LINK" class="social-link" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+            </a>
+            <a href="PLACEHOLDER_FACEBOOK_LINK" class="social-link" target="_blank" rel="noopener" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </a>
+            <a href="PLACEHOLDER_X_LINK" class="social-link" target="_blank" rel="noopener" aria-label="X (Twitter)">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom"><p>&copy; 2025 ValueGrid. All rights reserved.</p></div>
+    </div>
+  </footer>
+
+  <!-- ========== MODALS ========== -->
+  <!-- Login Modal -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal">
+      <button class="modal-close" id="loginClose" aria-label="Close">&times;</button>
+      <h2 class="modal-title">Welcome Back</h2>
+      <p class="modal-subtitle">Login to your ValueGrid account</p>
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" placeholder="Enter your email" required>
+          <span class="form-error" id="loginEmailError"></span>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="Enter your password" required>
+          <span class="form-error" id="loginPasswordError"></span>
+        </div>
+        <div class="forgot-link-wrap">
+          <button type="button" id="forgotPasswordBtn" class="link-btn forgot-link">Forgot Password?</button>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Login</button>
+      </form>
+      <div class="modal-divider"><span>or</span></div>
+      <button class="btn btn-google btn-full" id="googleLoginBtn">
+        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+        Continue with Google
+      </button>
+      <p class="modal-switch">Don't have an account? <button id="switchToSignup" class="link-btn">Sign Up</button></p>
+    </div>
+  </div>
+
+  <!-- Signup Modal -->
+  <div class="modal-overlay" id="signupModal">
+    <div class="modal">
+      <button class="modal-close" id="signupClose" aria-label="Close">&times;</button>
+      <h2 class="modal-title">Create Account</h2>
+      <p class="modal-subtitle">Join ValueGrid and grow your business online</p>
+      <form id="signupForm" novalidate>
+        <div class="form-group">
+          <label for="signupName">Full Name</label>
+          <input type="text" id="signupName" placeholder="Enter your full name" required>
+          <span class="form-error" id="signupNameError"></span>
+        </div>
+        <div class="form-group">
+          <label for="signupEmail">Email</label>
+          <input type="email" id="signupEmail" placeholder="Enter your email" required>
+          <span class="form-error" id="signupEmailError"></span>
+        </div>
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <input type="password" id="signupPassword" placeholder="Create a password" required>
+          <span class="form-error" id="signupPasswordError"></span>
+        </div>
+        <div class="form-group">
+          <label for="signupConfirmPassword">Confirm Password</label>
+          <input type="password" id="signupConfirmPassword" placeholder="Confirm your password" required>
+          <span class="form-error" id="signupConfirmError"></span>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Sign Up</button>
+      </form>
+      <div class="modal-divider"><span>or</span></div>
+      <button class="btn btn-google btn-full" id="googleSignupBtn">
+        <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
+        Continue with Google
+      </button>
+      <p class="modal-switch">Already have an account? <button id="switchToLogin" class="link-btn">Login</button></p>
+    </div>
+  </div>
+
+  <!-- Review Modal -->
+  <div class="modal-overlay" id="reviewModal">
+    <div class="modal">
+      <button class="modal-close" id="reviewClose" aria-label="Close">&times;</button>
+      <h2 class="modal-title">Add Your Review</h2>
+      <p class="modal-subtitle">Share your experience with ValueGrid</p>
+      <form id="reviewForm" novalidate>
+        <div class="form-group">
+          <label for="reviewName">Your Name</label>
+          <input type="text" id="reviewName" placeholder="Enter your name" required>
+          <span class="form-error" id="reviewNameError"></span>
+        </div>
+        <div class="form-group">
+          <label>Rating</label>
+          <div class="star-rating" id="starRating">
+            <button type="button" class="star-btn" data-rating="1">★</button>
+            <button type="button" class="star-btn" data-rating="2">★</button>
+            <button type="button" class="star-btn" data-rating="3">★</button>
+            <button type="button" class="star-btn" data-rating="4">★</button>
+            <button type="button" class="star-btn" data-rating="5">★</button>
+          </div>
+          <span class="form-error" id="reviewRatingError"></span>
+        </div>
+        <div class="form-group">
+          <label for="reviewText">Your Review</label>
+          <textarea id="reviewText" rows="4" placeholder="Write your review..." required></textarea>
+          <span class="form-error" id="reviewTextError"></span>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Submit Review</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Advisor Request Modal -->
+  <div class="modal-overlay" id="advisorModal">
+    <div class="modal">
+      <button class="modal-close" id="advisorModalClose" aria-label="Close">&times;</button>
+      <h2 class="modal-title">Connect with an Advisor</h2>
+      <p class="modal-subtitle">Fill in your details and we'll get back to you shortly.</p>
+      <form id="advisorForm" novalidate>
+        <div class="form-group">
+          <label for="advisorName">Your Name</label>
+          <input type="text" id="advisorName" placeholder="Enter your name" required>
+          <span class="form-error" id="advisorNameError"></span>
+        </div>
+        <div class="form-group">
+          <label for="advisorEmail">Your Email</label>
+          <input type="email" id="advisorEmail" placeholder="Enter your email" required>
+          <span class="form-error" id="advisorEmailError"></span>
+        </div>
+        <div class="form-group">
+          <label for="advisorMessage">Your Message</label>
+          <textarea id="advisorMessage" rows="3" placeholder="How can we help you?" required></textarea>
+          <span class="form-error" id="advisorMessageError"></span>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Send Request</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Forgot Password Modal -->
+  <div class="modal-overlay" id="forgotModal">
+    <div class="modal">
+      <button class="modal-close" id="forgotClose" aria-label="Close">&times;</button>
+
+      <!-- Step 1: Enter Email -->
+      <div class="forgot-step" id="forgotStep1">
+        <h2 class="modal-title">Forgot Password</h2>
+        <p class="modal-subtitle">Enter your email and we'll send you a verification code.</p>
+        <form id="forgotEmailForm" novalidate>
+          <div class="form-group">
+            <label for="forgotEmail">Email</label>
+            <input type="email" id="forgotEmail" placeholder="Enter your registered email" required>
+            <span class="form-error" id="forgotEmailError"></span>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="forgotSendBtn">Send Verification Code</button>
+        </form>
+        <p class="modal-switch">Remember your password? <button id="forgotBackToLogin" class="link-btn">Login</button></p>
+      </div>
+
+      <!-- Step 2: Enter OTP -->
+      <div class="forgot-step" id="forgotStep2" style="display:none;">
+        <h2 class="modal-title">Enter Verification Code</h2>
+        <p class="modal-subtitle">We sent a 6-digit code to <strong id="forgotEmailDisplay"></strong></p>
+        <form id="forgotOtpForm" novalidate>
+          <div class="form-group">
+            <label for="forgotOtp">Verification Code</label>
+            <input type="text" id="forgotOtp" placeholder="Enter 6-digit code" maxlength="6" inputmode="numeric" pattern="[0-9]{6}" required>
+            <span class="form-error" id="forgotOtpError"></span>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="forgotVerifyBtn">Verify Code</button>
+        </form>
+        <p class="modal-switch"><button id="forgotResendOtp" class="link-btn">Resend Code</button></p>
+      </div>
+
+      <!-- Step 3: New Password -->
+      <div class="forgot-step" id="forgotStep3" style="display:none;">
+        <h2 class="modal-title">Set New Password</h2>
+        <p class="modal-subtitle">Create a new password for your account.</p>
+        <form id="forgotResetForm" novalidate>
+          <div class="form-group">
+            <label for="forgotNewPassword">New Password</label>
+            <input type="password" id="forgotNewPassword" placeholder="Create a new password" required>
+            <span class="form-error" id="forgotNewPasswordError"></span>
+          </div>
+          <div class="form-group">
+            <label for="forgotConfirmPassword">Confirm Password</label>
+            <input type="password" id="forgotConfirmPassword" placeholder="Confirm your new password" required>
+            <span class="form-error" id="forgotConfirmError"></span>
+          </div>
+          <button type="submit" class="btn btn-primary btn-full" id="forgotResetBtn">Reset Password</button>
+        </form>
+      </div>
+
+      <!-- Step 4: Success -->
+      <div class="forgot-step" id="forgotStep4" style="display:none;">
+        <div class="forgot-success">
+          <span class="forgot-success-icon">✅</span>
+          <h2 class="modal-title">Password Reset!</h2>
+          <p class="modal-subtitle">Your password has been changed successfully. You can now login with your new password.</p>
+          <button class="btn btn-primary btn-full" id="forgotDoneBtn">Login Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"><span class="toast-message" id="toastMessage"></span></div>
+
+  <!-- Welcome Back Modal -->
+  <div class="modal-overlay" id="welcomeModal">
+    <div class="modal welcome-modal">
+      <div class="welcome-content">
+        <div class="welcome-icon">🎉</div>
+        <h2 class="modal-title" id="welcomeTitle">Welcome Back!</h2>
+        <p class="modal-subtitle" id="welcomeMessage">Welcome back to ValueGrid</p>
+        <div class="welcome-actions">
+          <button class="btn btn-primary btn-full" id="welcomeCloseBtn">Continue to Dashboard</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Complete Profile Modal -->
+  <div class="modal-overlay" id="profileModal">
+    <div class="modal profile-modal">
+      <button class="modal-close" id="profileClose" aria-label="Close">&times;</button>
+      <div class="profile-modal-content">
+        <div class="profile-modal-icon">📝</div>
+        <h2 class="modal-title">Complete Your Profile</h2>
+        <p class="modal-subtitle">Help us serve you better by filling in your details</p>
+        <form id="profileForm" novalidate>
+          <div class="form-group">
+            <label for="profileInputPhone">Phone Number</label>
+            <input type="tel" id="profileInputPhone" placeholder="Enter your phone number">
+          </div>
+          <div class="form-group">
+            <label for="profileInputBusiness">Business Name</label>
+            <input type="text" id="profileInputBusiness" placeholder="Enter your business name">
+          </div>
+          <div class="form-group">
+            <label for="profileInputBusinessType">Business Type</label>
+            <input type="text" id="profileInputBusinessType" placeholder="e.g., Restaurant, Cafe, Retail">
+          </div>
+          <div class="form-group">
+            <label for="profileInputLocation">Location</label>
+            <input type="text" id="profileInputLocation" placeholder="City, Area">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" id="profileSkipBtn">Skip for Now</button>
+            <button type="submit" class="btn btn-primary">Save Details</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== AI SUPPORT ========== -->
+  <div class="ai-support" id="aiSupport">
+    <button class="ai-toggle" id="aiToggle" aria-label="AI Support">
+      <span class="ai-icon">💬</span>
+    </button>
+    <div class="ai-chat" id="aiChat">
+      <div class="ai-chat-header">
+        <div class="ai-chat-title">
+          <span class="ai-avatar">🤖</span>
+          <div><h4>ValueGrid Support</h4><span class="ai-status">Online</span></div>
+        </div>
+        <button class="ai-close" id="aiClose" aria-label="Close chat">&times;</button>
+      </div>
+      <div class="ai-messages" id="aiMessages">
+        <div class="ai-message bot"><p>Hi! 👋 I'm ValueGrid's AI assistant. How can I help you today?</p></div>
+      </div>
+      <div class="ai-advisor-prompt" id="aiAdvisorPrompt" style="display:none;">
+        <p>Need human help?</p>
+        <button class="btn btn-outline btn-sm" id="connectAdvisorBtn">Connect with One of Our Advisors</button>
+      </div>
+      <form class="ai-input-form" id="aiInputForm">
+        <input type="text" id="aiInput" placeholder="Type your question..." autocomplete="off">
+        <button type="submit" class="ai-send" aria-label="Send">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
