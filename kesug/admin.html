@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ValueGrid — Admin Panel</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #101010; /* matches ValueGrid dark theme */
+    }
+    #vgFrame {
+      display: block;
+      width: 100%;
+      height: 100vh;
+      border: 0;
+    }
+    #vgFallback {
+      display: none;
+      position: fixed;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      background: #101010;
+      color: #f5f5f5;
+      font-family: "Segoe UI", Arial, sans-serif;
+      text-align: center;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+    #vgFallback a {
+      color: #ffd166;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <!--
+    Bridge page that exposes the admin panel through the valuegrid.kesug.com
+    domain. The domain is kept in the address bar while the real admin panel
+    (hosted on Render, password-protected) renders inside this full-page frame.
+  -->
+  <iframe id="vgFrame" src="https://valuegrid-8hx8.onrender.com/admin.html" title="ValueGrid Admin" allowfullscreen></iframe>
+
+  <div id="vgFallback">
+    <div>
+      <h2>ValueGrid Admin</h2>
+      <p>If this page does not load automatically,
+        <a href="https://valuegrid-8hx8.onrender.com/admin.html">open the admin panel</a>.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    var frame = document.getElementById('vgFrame');
+    var fallback = document.getElementById('vgFallback');
+
+    frame.addEventListener('error', function () {
+      fallback.style.display = 'flex';
+    });
+
+    var arrived = false;
+    frame.addEventListener('load', function () { arrived = true; });
+    setTimeout(function () {
+      if (!arrived) fallback.style.display = 'flex';
+    }, 30000);
+  </script>
+</body>
+</html>
