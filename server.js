@@ -384,22 +384,51 @@ app.post('/api/login', (req, res) => {
 });
 
 // ─── API: Google Auth ──────────────────────────────────────────
-app.post('/api/google-auth', (req, res) => {
-  const { email, name } = req.body;
-  if (!email) return res.status(400).json({ error: 'Email required' });
+// The client sends a Google OAuth2 access token; we verify it against
+// Google's userinfo endpoint before trusting it.
+app.post('/api/google-auth', async (req, res) => {
+  const { accessToken } = req.body;
+  if (!accessToken) {
+    return res.status(400).json({ error: 'Google access token required' });
+  }
+
+  let profile;
+  try {
+    const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { 'Authorization': 'Bearer ' + accessToken }
+    });
+    if (!r.ok) {
+      console.error('[GoogleAuth] userinfo failed: ' + r.status);
+      return res.status(401).json({ error: 'Invalid Google credentials. Please try again.' });
+    }
+    profile = await r.json();
+  } catch (err) {
+    console.error('[GoogleAuth Error]', err.message);
+    return res.status(500).json({ error: 'Failed to verify with Google. Try again.' });
+  }
+
+  const email = (profile.email || '').toLowerCase().trim();
+  if (!email) {
+    return res.status(400).json({ error: 'Google account has no email address.' });
+  }
+  const name = profile.name || profile.given_name || 'Google User';
 
   const users = loadUsers();
-  let user = users.find((u) => u.email === email.toLowerCase().trim());
+  let user = users.find((u) => u.email === email);
 
   if (!user) {
     user = {
       id: 'google_' + Date.now().toString(36),
-      name: name || 'Google User',
-      email: email.toLowerCase().trim(),
+      name: name,
+      email: email,
       createdAt: new Date().toISOString(),
       phone: '', businessName: '', businessType: '', location: ''
     };
     users.push(user);
+    saveUsers(users);
+  } else if (!user.password && user.name !== name) {
+    // Keep the display name fresh for Google-created accounts.
+    user.name = name;
     saveUsers(users);
   }
 
@@ -412,7 +441,9 @@ app.post('/api/google-auth', (req, res) => {
   });
   saveLogins(logins);
 
-  res.json({ success: true, user: user });
+  const safeUser = { ...user };
+  delete safeUser.password;
+  res.json({ success: true, user: safeUser });
   sendLoginAlertEmail(user.email, req);
 });
 app.get('/api/admin/data', requireAdmin, (req, res) => {

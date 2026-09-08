@@ -37,6 +37,25 @@
     }, duration);
   }
 
+  // ─── Google Sign-In helpers ──────────────────────────────
+  var GOOGLE_CLIENT_ID = "521670437024-qsj46krpnm43c2nv8mgtuu4dubpaviko.apps.googleusercontent.com";
+
+  // Ensures the Google Identity Services script is loaded, then calls cb().
+  function loadGsiScript(cb) {
+    if (window.google && google.accounts && google.accounts.oauth2) {
+      return cb();
+    }
+    var s = document.createElement("script");
+    s.src = "https://accounts.google.com/gsi/client";
+    s.async = true;
+    s.defer = true;
+    s.onload = function () { cb(); };
+    s.onerror = function () {
+      showToast("Failed to load Google Sign-In. Check your connection.");
+    };
+    document.head.appendChild(s);
+  }
+
   function formatDate(dateStr) {
     var d = new Date(dateStr);
     return d.toLocaleDateString("en-US", {
@@ -350,16 +369,54 @@
     },
 
     handleGoogleAuth: function () {
-      var googleUser = {
-        name: "Google User",
-        email: "user@gmail.com"
-      };
+      var self = this;
 
+      loadGsiScript(function () {
+        if (!window.google || !google.accounts || !google.accounts.oauth2) {
+          showToast("Google Sign-In is unavailable right now.");
+          return;
+        }
+
+        var client = google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: "openid email profile",
+          callback: function (resp) {
+            if (resp && resp.access_token) {
+              self.completeGoogleAuth(resp.access_token);
+            } else if (resp && resp.error) {
+              var msg = "Google sign-in error";
+              if (resp.error === "popup_closed_by_user") {
+                msg = "Google sign-in was cancelled.";
+              } else if (resp.error === "origin_mismatch") {
+                msg = "Google sign-in is not configured for this site. Add " + location.origin + " as an authorized JavaScript origin in Google Cloud Console.";
+              } else if (resp.error_description) {
+                msg = "Google sign-in failed: " + resp.error_description;
+              }
+              showToast(msg);
+            }
+          },
+          error_callback: function (err) {
+            var msg = "Google sign-in failed.";
+            if (err && err.type === "popup_closed_by_user") {
+              msg = "Google sign-in was cancelled.";
+            } else if (err && err.type === "origin_mismatch") {
+              msg = "Google sign-in is not configured for this site. Add " + location.origin + " as an authorized JavaScript origin in Google Cloud Console.";
+            } else if (err && err.type === "popup_failed_to_open") {
+              msg = "Google sign-in popup could not open. Allow popups for this site and try again.";
+            }
+            showToast(msg);
+          }
+        });
+        client.requestAccessToken();
+      });
+    },
+
+    completeGoogleAuth: function (accessToken) {
       var self = this;
       fetch("/api/google-auth", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(googleUser)
+        body: JSON.stringify({ accessToken: accessToken })
       })
       .then(function (r) { return r.json(); })
       .then(function (data) {
@@ -369,6 +426,8 @@
           self.closeAllModals();
           self.updateUI();
           showToast("Signed in with Google. Welcome, " + data.user.name + "!");
+        } else if (data.error) {
+          showToast(data.error);
         }
       })
       .catch(function () {
