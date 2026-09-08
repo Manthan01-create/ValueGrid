@@ -12,13 +12,14 @@ const transporter = nodemailer.createTransport({
 });
 
 const PORT = 3000;
+const PUBLIC_URL = (process.env.PUBLIC_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
 const TO = 'manthan6446@gmail.com';
 const LOGO_PATH = path.join(__dirname, 'logo-light.png');
 const EMAIL_LOGO = { filename: 'logo-light.png', path: LOGO_PATH, cid: 'vg-logo' };
 
 const read = f => fs.readFileSync(path.join(__dirname, f), 'utf-8');
 const otp = () => String(crypto.randomInt(100000, 999999)).split('').join(' ');
-const injectOpenLink = html => html.split('{{LINK}}').join(`http://localhost:${PORT}`);
+const injectOpenLink = html => html.split('{{LINK}}').join(PUBLIC_URL);
 
 const mails = [
   {
@@ -31,7 +32,7 @@ const mails = [
     subject: 'Reset your ValueGrid password',
     html: read('valuegrid-password-reset-mail.html')
       .replace('{{OTP}}', otp())
-      .split('{{RESET_LINK}}').join(`http://localhost:${PORT}/reset`),
+      .split('{{RESET_LINK}}').join(`${PUBLIC_URL}/reset`),
   },
   {
     name: '3. Login Alert',
@@ -40,7 +41,7 @@ const mails = [
       .replace('Chrome on Windows', 'Chrome on Windows')
       .replace('103.45.67.89', '127.0.0.1')
       .replace('July 10, 2025 &middot; 2:34 PM IST', new Date().toLocaleString('en-IN') + ' IST')
-      .replace(/href="#"/g, `href="http://localhost:${PORT}"`),
+      .replace(/href="#"/g, `href="${PUBLIC_URL}"`),
   },
   {
     name: '4. Welcome / Thank You',

@@ -8,8 +8,40 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Public URL of the site (e.g. https://valuegrid.com).
+// Used for links inside emails. Falls back to localhost in development.
+const PUBLIC_URL = (process.env.PUBLIC_URL || `http://localhost:${PORT}`).replace(/\/$/, '');
+
+// Admin panel password — must be set in production (see render.yaml).
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
+
 app.use(express.json());
 app.use(express.static(__dirname));
+
+// ─── Admin auth ────────────────────────────────────────────────
+// Protects every /api/admin/* route and the admin.html page itself.
+// The client sends the password as `Authorization: Bearer <password>`,
+// or as `?admin_key=<password>` for the initial page load.
+function adminKey(req) {
+  const auth = req.headers.authorization || '';
+  const bearer = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+  return bearer || (typeof req.query.admin_key === 'string' ? req.query.admin_key : '');
+}
+function requireAdmin(req, res, next) {
+  if (ADMIN_PASSWORD && adminKey(req) === ADMIN_PASSWORD) {
+    return next();
+  }
+  return res.status(401).json({ error: 'Unauthorized. Admin password required.' });
+}
+
+// Admin credentials check (used by the login form)
+app.post('/api/admin/login', (req, res) => {
+  const { password } = req.body;
+  if (ADMIN_PASSWORD && password === ADMIN_PASSWORD) {
+    return res.json({ success: true });
+  }
+  return res.status(401).json({ error: 'Incorrect admin password.' });
+});
 
 // ─── SMTP Config ───────────────────────────────────────────────
 const SMTP_USER = process.env.SMTP_USER || '';
@@ -70,7 +102,7 @@ function generateOTP() {
 // Templates keep the raw text `Open ValueGrid` inside the button cell
 // so this stays a simple, safe find-and-replace.
 function injectOpenLink(html) {
-  return html.split('{{LINK}}').join(`http://localhost:${PORT}`);
+  return html.split('{{LINK}}').join(PUBLIC_URL);
 }
 
 function buildEmailHTML(otp) {
@@ -85,7 +117,7 @@ function buildPasswordResetHTML(otp) {
   const templatePath = path.join(__dirname, 'valuegrid-password-reset-mail.html');
   let html = fs.readFileSync(templatePath, 'utf-8');
   html = html.replace('{{OTP}}', otp.split('').join(' '));
-  html = html.replace('http://localhost:3000', `http://localhost:${PORT}`);
+  html = html.replace('http://localhost:3000', PUBLIC_URL);
   return html;
 }
 
@@ -121,9 +153,9 @@ function buildLoginAlertHTML(req) {
   html = html.replace('103.45.67.89', ip);
   html = html.replace('July 10, 2025 &middot; 2:34 PM IST', time);
   html = html.replace('Secure My Account',
-    `<a href="http://localhost:${PORT}" style="font-size:14px; font-weight:600; color:#ffffff; text-decoration:none; display:inline-block;">Secure My Account</a>`);
+    `<a href="${PUBLIC_URL}" style="font-size:14px; font-weight:600; color:#ffffff; text-decoration:none; display:inline-block;">Secure My Account</a>`);
   html = html.replace('href="#" style="font-size:14px; font-weight:600; color:#181818; text-decoration:none; display:inline-block;">This Was Me',
-    `href="http://localhost:${PORT}" style="font-size:14px; font-weight:600; color:#181818; text-decoration:none; display:inline-block;">This Was Me`);
+    `href="${PUBLIC_URL}" style="font-size:14px; font-weight:600; color:#181818; text-decoration:none; display:inline-block;">This Was Me`);
   return html;
 }
 
@@ -383,7 +415,7 @@ app.post('/api/google-auth', (req, res) => {
   res.json({ success: true, user: user });
   sendLoginAlertEmail(user.email, req);
 });
-app.get('/api/admin/data', (req, res) => {
+app.get('/api/admin/data', requireAdmin, (req, res) => {
   res.json({
     users: loadUsers(),
     logins: loadLogins(),
@@ -413,7 +445,7 @@ app.post('/api/reviews', (req, res) => {
   res.json({ success: true, review });
 });
 
-app.put('/api/reviews/:id', (req, res) => {
+app.put('/api/reviews/:id', requireAdmin, (req, res) => {
   const { id } = req.params;
   const { name, rating, text } = req.body;
   const reviews = loadReviews();
@@ -427,7 +459,7 @@ app.put('/api/reviews/:id', (req, res) => {
   res.json({ success: true, review: reviews[idx] });
 });
 
-app.delete('/api/reviews/:id', (req, res) => {
+app.delete('/api/reviews/:id', requireAdmin, (req, res) => {
   const { id } = req.params;
   let reviews = loadReviews();
   const before = reviews.length;
@@ -438,7 +470,7 @@ app.delete('/api/reviews/:id', (req, res) => {
 });
 
 // ─── API: Delete Login Entry ─────────────────────────────────
-app.delete('/api/logins/:index', (req, res) => {
+app.delete('/api/logins/:index', requireAdmin, (req, res) => {
   const idx = parseInt(req.params.index, 10);
   const logins = loadLogins();
   if (idx < 0 || idx >= logins.length) return res.status(404).json({ error: 'Entry not found.' });
@@ -448,7 +480,7 @@ app.delete('/api/logins/:index', (req, res) => {
 });
 
 // ─── API: Clear All Login History ────────────────────────────
-app.delete('/api/logins', (req, res) => {
+app.delete('/api/logins', requireAdmin, (req, res) => {
   saveLogins([]);
   res.json({ success: true, message: 'Login history cleared.' });
 });

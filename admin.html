@@ -50,7 +50,24 @@
   </style>
 </head>
 <body>
-  <div class="admin-container">
+  <!-- ─── Admin Login Screen ─────────────────────────────── -->
+  <div id="loginScreen" class="admin-container" style="display:flex; align-items:center; justify-content:center; min-height:100vh;">
+    <div class="admin-card" style="max-width:420px; width:100%;">
+      <h2 style="margin:0 0 6px 0;">🛡️ ValueGrid Admin</h2>
+      <p style="margin:0 0 20px 0; color:var(--text-secondary); font-size:var(--fs-sm);">Enter the admin password to continue.</p>
+      <form id="loginForm" novalidate>
+        <label for="adminPassword" style="display:block; font-size:13px; font-weight:600; color:var(--text-secondary); margin-bottom:6px;">Admin Password</label>
+        <input type="password" id="adminPassword" placeholder="••••••••••••" autocomplete="off"
+               style="width:100%; padding:10px 12px; border:1px solid var(--border-color); border-radius:8px; background:var(--bg-input); color:var(--text-primary); font-size:14px; margin-bottom:14px; box-sizing:border-box;">
+        <p id="loginError" style="display:none; margin:0 0 12px 0; color:var(--danger); font-size:13px;">Incorrect password. Try again.</p>
+        <button type="submit" id="loginBtn" class="btn" style="width:100%;">Unlock Admin Panel</button>
+      </form>
+      <p style="margin:16px 0 0 0; font-size:12px; color:var(--text-secondary);"><a href="/" style="color:var(--secondary);">← Back to website</a></p>
+    </div>
+  </div>
+
+  <!-- ─── Admin Panel (hidden until unlocked) ─────────────── -->
+  <div class="admin-container" id="panelScreen">
     <div class="admin-header">
       <h2>🛡️ ValueGrid Database Admin Panel</h2>
       <a href="/" class="btn btn-outline">Back to Website</a>
@@ -136,6 +153,7 @@
 
   <script>
     let editingId = null;
+    let adminToken = sessionStorage.getItem('vg_admin_token') || '';
 
     function escapeHtml(str) {
       const div = document.createElement('div');
@@ -143,9 +161,57 @@
       return div.innerHTML;
     }
 
+    // Add the admin token to every fetch so the server can verify it.
+    function adminFetch(url, options = {}) {
+      options.headers = Object.assign({}, options.headers, {
+        'Authorization': 'Bearer ' + adminToken
+      });
+      return fetch(url, options);
+    }
+
+    function showLogin() {
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('panelScreen').style.display = 'none';
+    }
+    function showPanel() {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('panelScreen').style.display = 'block';
+    }
+
+    // ─── Login flow ─────────────────────────────────────────
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const password = document.getElementById('adminPassword').value.trim();
+      if (!password) return;
+      document.getElementById('loginBtn').disabled = true;
+      document.getElementById('loginBtn').textContent = 'Checking…';
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        if (res.ok) {
+          adminToken = password;
+          sessionStorage.setItem('vg_admin_token', adminToken);
+          document.getElementById('loginError').style.display = 'none';
+          showPanel();
+          loadAdminData();
+        } else {
+          document.getElementById('loginError').style.display = 'block';
+        }
+      } catch (err) {
+        document.getElementById('loginError').style.display = 'block';
+      } finally {
+        document.getElementById('loginBtn').disabled = false;
+        document.getElementById('loginBtn').textContent = 'Unlock Admin Panel';
+      }
+    });
+
     async function loadAdminData() {
       try {
-        const res = await fetch('/api/admin/data');
+        const res = await adminFetch('/api/admin/data');
+        if (res.status === 401) { showLogin(); return; }
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
 
@@ -209,7 +275,7 @@
         return;
       }
       try {
-        const res = await fetch(`/api/reviews/${editingId}`, {
+        const res = await adminFetch(`/api/reviews/${editingId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -226,7 +292,7 @@
     async function deleteReview(id) {
       if (!confirm('Delete this review permanently?')) return;
       try {
-        const res = await fetch(`/api/reviews/${id}`, { method: 'DELETE' });
+        const res = await adminFetch(`/api/reviews/${id}`, { method: 'DELETE' });
         if (!res.ok) throw new Error('Delete failed');
         loadAdminData();
       } catch (err) {
@@ -238,7 +304,7 @@
     async function deleteLogin(index) {
       if (!confirm('Delete this login entry?')) return;
       try {
-        const res = await fetch(`/api/logins/${index}`, { method: 'DELETE' });
+        const res = await adminFetch(`/api/logins/${index}`, { method: 'DELETE' });
         if (!res.ok) throw new Error('Delete failed');
         loadAdminData();
       } catch (err) {
@@ -250,7 +316,7 @@
     async function clearAllLogins() {
       if (!confirm('Clear ALL login history? This cannot be undone.')) return;
       try {
-        const res = await fetch('/api/logins', { method: 'DELETE' });
+        const res = await adminFetch('/api/logins', { method: 'DELETE' });
         if (!res.ok) throw new Error('Clear failed');
         loadAdminData();
       } catch (err) {
@@ -263,6 +329,12 @@
       if (e.target.id === 'editModal') closeModal();
     });
 
+    // Start: show login if no stored token, otherwise try to load data.
+    if (adminToken) {
+      showPanel();
+    } else {
+      showLogin();
+    }
     loadAdminData();
     setInterval(loadAdminData, 5000);
   </script>

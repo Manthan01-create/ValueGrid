@@ -20,6 +20,14 @@ Open http://localhost:3000
 |---|---|
 | `SMTP_USER` | Gmail address used to send emails |
 | `SMTP_PASS` | Gmail App Password (https://myaccount.google.com/apppasswords) |
+| `PUBLIC_URL` | Public URL of the site, e.g. `https://valuegrid.kesug.com`. Used for links inside emails. Defaults to `http://localhost:3000` |
+
+## Set your domain (production)
+
+1. Set `PUBLIC_URL` to your real domain (e.g. `https://valuegrid.kesug.com`) in your host's
+   environment variables (Render dashboard → your service → Environment).
+2. The app will use that domain for all links sent in emails instead of `localhost`.
+
 
 ## Deploy
 
