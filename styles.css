@@ -437,11 +437,15 @@ img { max-width: 100%; display: block; }
   box-shadow: var(--shadow-lg);
   transform: translateY(-10px);
   opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
   transition: all var(--transition-base);
 }
 .mobile-nav.open {
   transform: translateY(0);
   opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
 }
 
 .mobile-nav-link {
@@ -1278,6 +1282,56 @@ img { max-width: 100%; display: block; }
   color: var(--text-secondary);
 }
 
+/* Signup modal compact layout — keeps Google button visible without scrolling */
+#signupModal .modal {
+  padding: var(--space-md) var(--space-lg);
+  max-width: 400px;
+}
+#signupModal .modal-title {
+  font-size: 1.15rem;
+  margin-bottom: 2px;
+}
+#signupModal .modal-subtitle {
+  font-size: var(--fs-xs);
+  margin-bottom: var(--space-sm);
+}
+#signupModal .form-group {
+  margin-bottom: 10px;
+}
+#signupModal .form-group label {
+  font-size: 0.72rem;
+  margin-bottom: 2px;
+}
+#signupModal .form-group input {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.8rem;
+}
+#signupModal .form-group .form-error {
+  margin-top: 2px;
+}
+#signupModal .btn {
+  padding: 0.5rem 1rem;
+  font-size: var(--fs-xs);
+}
+#signupModal .modal-divider {
+  margin: 10px 0;
+}
+#signupModal .modal-switch {
+  margin-top: 10px;
+  font-size: var(--fs-xs);
+}
+
+/* Short screens: hide subtitle and tighten further so nothing needs scrolling */
+@media (max-height: 700px) {
+  #signupModal .modal-subtitle { display: none; }
+  #signupModal .modal { padding: var(--space-sm) var(--space-md); }
+  #signupModal .form-group { margin-bottom: 7px; }
+  #signupModal .form-group input { padding: 0.4rem 0.7rem; }
+  #signupModal .btn { padding: 0.45rem 1rem; }
+  #signupModal .modal-divider { margin: 7px 0; }
+  #signupModal .modal-switch { margin-top: 7px; }
+}
+
 /* Form */
 .form-group {
   margin-bottom: var(--space-md);
@@ -1638,7 +1692,7 @@ img { max-width: 100%; display: block; }
 
   .features-grid { grid-template-columns: 1fr; }
   .plans-grid { grid-template-columns: 1fr; }
-  .plans-grid .plan-card:last-child { grid-column: auto; max-width: none; }
+  .plans-grid .plan-card:last-child { grid-column: auto; max-width: none; margin: 0; }
   .portfolio-grid { grid-template-columns: 1fr; }
   .reviews-container { grid-template-columns: 1fr; }
 
