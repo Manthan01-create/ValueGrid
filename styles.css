@@ -975,6 +975,14 @@ img { max-width: 100%; display: block; }
 }
 .price-currency { font-size: var(--fs-xl); vertical-align: super; }
 .price-period { font-size: var(--fs-sm); font-weight: 400; color: var(--text-tertiary); }
+.price-old {
+  font-size: var(--fs-lg);
+  font-weight: 500;
+  color: var(--text-tertiary);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  margin-right: 8px;
+}
 
 .plan-features {
   text-align: left;
