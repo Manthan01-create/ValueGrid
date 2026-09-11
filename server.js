@@ -90,6 +90,7 @@ const otpStore = {};
 const USERS_FILE = path.join(__dirname, 'users.json');
 const LOGINS_FILE = path.join(__dirname, 'logins.json');
 const REVIEWS_FILE = path.join(__dirname, 'reviews.json');
+const QUERIES_FILE = path.join(__dirname, 'queries.json');
 
 function loadUsers() {
   try { return JSON.parse(fs.readFileSync(USERS_FILE, 'utf-8')); } catch { return []; }
@@ -105,6 +106,11 @@ function loadReviews() {
   try { return JSON.parse(fs.readFileSync(REVIEWS_FILE, 'utf-8')); } catch { return []; }
 }
 function saveReviews(reviews) { fs.writeFileSync(REVIEWS_FILE, JSON.stringify(reviews, null, 2)); }
+
+function loadQueries() {
+  try { return JSON.parse(fs.readFileSync(QUERIES_FILE, 'utf-8')); } catch { return []; }
+}
+function saveQueries(queries) { fs.writeFileSync(QUERIES_FILE, JSON.stringify(queries, null, 2)); }
 
 
 // ─── OTP helpers ──────────────────────────────────────────────
@@ -537,6 +543,28 @@ app.delete('/api/logins', requireAdmin, (req, res) => {
 });
 
 // ─── Start ────────────────────────────────────────────────────
+// --- API: Queries ---
+app.post('/api/queries', (req, res) => {
+  const { name, email, message, userId } = req.body;
+  if (!name || !email || !message) return res.status(400).json({ error: 'Required' });
+  const queries = loadQueries();
+  const newQuery = { id: Date.now(), name, email, message, userId: userId || null, date: new Date().toISOString() };
+  queries.push(newQuery);
+  saveQueries(queries);
+  res.json({ success: true, query: newQuery });
+});
+
+app.get('/api/admin/queries', requireAdmin, (req, res) => {
+  res.json(loadQueries());
+});
+
+app.delete('/api/admin/queries/:id', requireAdmin, (req, res) => {
+  let queries = loadQueries();
+  queries = queries.filter(q => q.id !== parseInt(req.params.id, 10));
+  saveQueries(queries);
+  res.json({ success: true });
+});
+
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`\n🚀 ValueGrid server running at http://localhost:${PORT}\n`);
 });

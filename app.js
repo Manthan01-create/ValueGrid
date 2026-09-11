@@ -1055,27 +1055,30 @@
 
       if (!valid) return;
 
-      var requests = JSON.parse(localStorage.getItem("vg_advisor_requests") || "[]");
-      requests.push({
+      var data = {
         name: name,
         email: email,
         message: message,
-        date: new Date().toISOString(),
         userId: Auth.currentUser ? Auth.currentUser.id : null
-      });
-      localStorage.setItem("vg_advisor_requests", JSON.stringify(requests));
+      };
 
-      // In production: send email to PLACEHOLDER_SUPPORT_EMAIL
-      console.log("[Advisor Request]", {
-        name: name,
-        email: email,
-        message: message,
-        recipient: "PLACEHOLDER_SUPPORT_EMAIL"
+      fetch('/api/queries', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(res => res.json())
+      .then(res => {
+        Auth.closeModal("advisor");
+        showToast("Your request has been sent! Our advisor will contact you shortly.");
+        $("#advisorForm").reset();
+      })
+      .catch(err => {
+        console.error("[Advisor Request Error]", err);
+        showToast("An error occurred. Please try again.");
       });
-
-      Auth.closeModal("advisor");
-      showToast("Your request has been sent! Our advisor will contact you shortly.");
-      $("#advisorForm").reset();
     }
   };
 

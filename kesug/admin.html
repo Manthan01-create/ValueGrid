@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ValueGrid — Admin Panel</title>
   <style>
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       height: 100%;
-      background: #101010; /* matches ValueGrid dark theme */
+      background: #101010;
+      /* matches ValueGrid dark theme */
     }
+
     #vgFrame {
       display: block;
       width: 100%;
       height: 100vh;
       border: 0;
     }
+
     #vgFallback {
       display: none;
       position: fixed;
@@ -30,19 +35,22 @@
       padding: 24px;
       box-sizing: border-box;
     }
+
     #vgFallback a {
       color: #ffd166;
       font-weight: 600;
     }
   </style>
 </head>
+
 <body>
   <!--
     Bridge page that exposes the admin panel through the valuegrid.kesug.com
     domain. The domain is kept in the address bar while the real admin panel
     (hosted on Render, password-protected) renders inside this full-page frame.
   -->
-  <iframe id="vgFrame" src="https://valuegrid-8hx8.onrender.com/admin.html" title="ValueGrid Admin" allowfullscreen></iframe>
+  <iframe id="vgFrame" src="https://valuegrid-8hx8.onrender.com/admin.html" title="ValueGrid Admin"
+    allowfullscreen></iframe>
 
   <div id="vgFallback">
     <div>
@@ -68,4 +76,5 @@
     }, 30000);
   </script>
 </body>
+
 </html>
