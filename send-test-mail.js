@@ -16,6 +16,7 @@ const PUBLIC_URL = (process.env.PUBLIC_URL || `http://localhost:${PORT}`).replac
 const TO = 'manthan6446@gmail.com';
 const LOGO_PATH = path.join(__dirname, 'logo-light.png');
 const EMAIL_LOGO = { filename: 'logo-light.png', path: LOGO_PATH, cid: 'vg-logo' };
+const EMAIL_LOGO_WHITE = { filename: 'logo-dark.png', path: path.join(__dirname, 'logo-dark.png'), cid: 'vg-logo-white' };
 
 const read = f => fs.readFileSync(path.join(__dirname, f), 'utf-8');
 const otp = () => String(crypto.randomInt(100000, 999999)).split('').join(' ');
@@ -29,10 +30,15 @@ const mails = [
   },
   {
     name: '2. Password Reset',
-    subject: 'Reset your ValueGrid password',
-    html: read('valuegrid-password-reset-mail.html')
-      .replace('{{OTP}}', otp())
-      .split('{{RESET_LINK}}').join(`${PUBLIC_URL}/reset`),
+    subject: 'Your OTP for Password Reset',
+    html: (() => {
+      let h = read('valuegrid-password-reset-mail.html');
+      const sixDigits = String(crypto.randomInt(1, 1000000)).padStart(6, '0');
+      sixDigits.split('').forEach((d, i) => {
+        h = h.replace(`{{D${i + 1}}}`, d);
+      });
+      return h;
+    })(),
   },
   {
     name: '3. Login Alert',
@@ -60,7 +66,7 @@ const mails = [
         to: TO,
         subject: `[TEST] ${m.subject}`,
         text: m.html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(),
-        attachments: [EMAIL_LOGO],
+        attachments: [EMAIL_LOGO, EMAIL_LOGO_WHITE],
         html: m.html,
       });
       console.log(`SENT  ${m.name} -> ${r.messageId}`);

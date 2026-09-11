@@ -68,6 +68,14 @@ const EMAIL_LOGO = {
   cid: 'vg-logo', // referenced as <img src="cid:vg-logo"> in templates
 };
 
+// White wordmark for dark-background emails. (The file is named logo-dark.png,
+// i.e. "the logo for dark backgrounds" — it has white text.)
+const EMAIL_LOGO_WHITE = {
+  filename: 'logo-dark.png',
+  path: path.join(__dirname, 'logo-dark.png'),
+  cid: 'vg-logo-white', // referenced as <img src="cid:vg-logo-white">
+};
+
 // ─── In-memory OTP store ──────────────────────────────────────
 // { email: { otp, expiresAt, purpose } }
 const otpStore = {};
@@ -116,6 +124,10 @@ function buildEmailHTML(otp) {
 function buildPasswordResetHTML(otp) {
   const templatePath = path.join(__dirname, 'valuegrid-password-reset-mail.html');
   let html = fs.readFileSync(templatePath, 'utf-8');
+  // The template renders each OTP digit in its own box ({{D1}}..{{D6}}).
+  String(otp).padStart(6, '0').split('').forEach((digit, i) => {
+    html = html.replace(`{{D${i + 1}}}`, digit);
+  });
   html = html.replace('{{OTP}}', otp.split('').join(' '));
   html = html.replace('http://localhost:3000', PUBLIC_URL);
   return html;
@@ -209,7 +221,7 @@ app.post('/api/forgot-password', async (req, res) => {
   const otp = generateOTP();
   otpStore[email.toLowerCase().trim()] = {
     otp,
-    expiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
+    expiresAt: Date.now() + 10 * 60 * 1000, // 10 minutes
     purpose: 'password-reset',
   };
 
@@ -217,8 +229,8 @@ app.post('/api/forgot-password', async (req, res) => {
     await transporter.sendMail({
       from: `"ValueGrid Security" <${SMTP_USER}>`,
       to: email,
-      subject: 'Your ValueGrid Verification Code',
-      attachments: [EMAIL_LOGO],
+      subject: 'Your OTP for Password Reset',
+      attachments: [EMAIL_LOGO_WHITE],
       html: buildPasswordResetHTML(otp),
     });
     console.log(`[OTP] Sent to ${email}: ${otp}`);
