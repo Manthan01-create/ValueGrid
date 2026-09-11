@@ -17,6 +17,7 @@ const TO = 'manthan6446@gmail.com';
 const LOGO_PATH = path.join(__dirname, 'logo-light.png');
 const EMAIL_LOGO = { filename: 'logo-light.png', path: LOGO_PATH, cid: 'vg-logo' };
 const EMAIL_LOGO_WHITE = { filename: 'logo-dark.png', path: path.join(__dirname, 'logo-dark.png'), cid: 'vg-logo-white' };
+const EMAIL_LOCK_ICON = { filename: 'lock.jpg', path: path.join(__dirname, 'lock.jpg'), cid: 'vg-lock-icon' };
 
 const read = f => fs.readFileSync(path.join(__dirname, f), 'utf-8');
 const otp = () => String(crypto.randomInt(100000, 999999)).split('').join(' ');
@@ -68,7 +69,7 @@ const mails = [
         to: TO,
         subject: `[TEST] ${m.subject}`,
         text: m.html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim(),
-        attachments: [EMAIL_LOGO, EMAIL_LOGO_WHITE],
+        attachments: [EMAIL_LOGO, EMAIL_LOGO_WHITE, EMAIL_LOCK_ICON],
         html: m.html,
       });
       console.log(`SENT  ${m.name} -> ${r.messageId}`);

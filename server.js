@@ -76,6 +76,12 @@ const EMAIL_LOGO_WHITE = {
   cid: 'vg-logo-white', // referenced as <img src="cid:vg-logo-white">
 };
 
+const EMAIL_LOCK_ICON = {
+  filename: 'lock.jpg',
+  path: path.join(__dirname, 'lock.jpg'),
+  cid: 'vg-lock-icon',
+};
+
 // ─── In-memory OTP store ──────────────────────────────────────
 // { email: { otp, expiresAt, purpose } }
 const otpStore = {};
@@ -232,7 +238,7 @@ app.post('/api/forgot-password', async (req, res) => {
       from: `"ValueGrid Security" <${SMTP_USER}>`,
       to: email,
       subject: 'Your OTP for Password Reset',
-      attachments: [EMAIL_LOGO_WHITE],
+      attachments: [EMAIL_LOGO_WHITE, EMAIL_LOCK_ICON],
       html: buildPasswordResetHTML(otp),
     });
     console.log(`[OTP] Sent to ${email}: ${otp}`);
