@@ -858,7 +858,7 @@
     conversationCount: 0,
     knowledge: {
       services: "ValueGrid offers: Website Development, Mobile-Friendly Websites, Google Business Profile Setup, Social Media Setup, Digital Menus, Online Ordering, Payment Integration, Basic SEO, Website Maintenance, and Marketing & Customer Growth.",
-      pricing: "Our plans are coming soon! We offer Starter, Growth, and Premium packages designed for small businesses. Stay tuned for affordable pricing.",
+      pricing: "We offer three budget-friendly plans: Starter at ₹3,000/month, Growth at ₹5,000/month, and Premium at ₹10,000/month. Each plan is designed for small businesses to grow online.",
       contact: "You can reach us by phone at our business number or email us. You can also connect with one of our advisors directly through this chat.",
       about: "ValueGrid helps small businesses grow by bringing them online through affordable and practical digital solutions. We help local businesses, cafes, restaurants, and other offline businesses build their digital presence.",
       advisor: "If you need personalized help, click the 'Connect with One of Our Advisors' button below to request a callback from our team.",
@@ -1005,6 +1005,18 @@
 
       $("#advisorForm").addEventListener("submit", function (e) {
         self.handleSubmit(e);
+      });
+
+      // Plan CTA buttons pre-fill the advisor message with the chosen plan.
+      $$(".plan-cta").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var plan = btn.getAttribute("data-plan") || "";
+          if (plan) {
+            $("#advisorMessage").value =
+              "I'm interested in the " + plan + " plan. Please share more details.";
+          }
+          self.openModal();
+        });
       });
     },
 
