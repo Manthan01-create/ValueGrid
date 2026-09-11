@@ -112,6 +112,14 @@ function loadQueries() {
 }
 function saveQueries(queries) { fs.writeFileSync(QUERIES_FILE, JSON.stringify(queries, null, 2)); }
 
+// Make sure every data file exists on boot — never run without a database.
+function ensureDataFiles() {
+  [USERS_FILE, LOGINS_FILE, REVIEWS_FILE, QUERIES_FILE].forEach((file) => {
+    if (!fs.existsSync(file)) fs.writeFileSync(file, '[]');
+  });
+}
+ensureDataFiles();
+
 
 // ─── OTP helpers ──────────────────────────────────────────────
 function generateOTP() {
@@ -473,6 +481,7 @@ app.post('/api/google-auth', async (req, res) => {
   sendLoginAlertEmail(user.email, req);
 });
 app.get('/api/admin/data', requireAdmin, (req, res) => {
+  res.set('Cache-Control', 'no-store');
   res.json({
     users: loadUsers(),
     logins: loadLogins(),
@@ -495,6 +504,7 @@ app.delete('/api/admin/users/:id', requireAdmin, (req, res) => {
 
 // ─── API: Reviews CRUD ──────────────────────────────────────
 app.get('/api/reviews', (req, res) => {
+  res.set('Cache-Control', 'no-store');
   res.json(loadReviews());
 });
 
@@ -568,6 +578,7 @@ app.post('/api/queries', (req, res) => {
 });
 
 app.get('/api/admin/queries', requireAdmin, (req, res) => {
+  res.set('Cache-Control', 'no-store');
   res.json(loadQueries());
 });
 
