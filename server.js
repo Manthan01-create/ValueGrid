@@ -480,6 +480,19 @@ app.get('/api/admin/data', requireAdmin, (req, res) => {
   });
 });
 
+// ─── API: Delete User ────────────────────────────────────────
+app.delete('/api/admin/users/:id', requireAdmin, (req, res) => {
+  const { id } = req.params;
+  const users = loadUsers();
+  const userIndex = users.findIndex((u) => u.id === id);
+
+  if (userIndex === -1) return res.status(404).json({ error: 'User not found.' });
+
+  users.splice(userIndex, 1);
+  saveUsers(users);
+  res.json({ success: true });
+});
+
 // ─── API: Reviews CRUD ──────────────────────────────────────
 app.get('/api/reviews', (req, res) => {
   res.json(loadReviews());

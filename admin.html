@@ -83,6 +83,7 @@
             <th>Name</th>
             <th>Email</th>
             <th>Created At</th>
+            <th style="text-align:center;">Actions</th>
           </tr>
         </thead>
         <tbody></tbody>
@@ -238,7 +239,8 @@
             <td>${escapeHtml(u.name)}</td>
             <td>${escapeHtml(u.email)}</td>
             <td>${new Date(u.createdAt).toLocaleString()}</td>
-          </tr>`).join('') : '<tr><td colspan="4">No users registered yet.</td></tr>';
+            <td style="text-align:center;"><button class="btn-sm del" onclick="deleteUser('${u.id}')">Delete</button></td>
+          </tr>`).join('') : '<tr><td colspan="5">No users registered yet.</td></tr>';
 
         const lTbody = document.querySelector('#loginsTable tbody');
         lTbody.innerHTML = data.logins.length ? data.logins.map((l, i) => `
@@ -346,6 +348,18 @@
       } catch (err) {
         console.error(err);
         alert('Failed to delete query.');
+      }
+    }
+
+    async function deleteUser(id) {
+      if (!confirm('Delete this user permanently? This action cannot be undone.')) return;
+      try {
+        const res = await adminFetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Delete failed');
+        loadAdminData();
+      } catch (err) {
+        console.error(err);
+        alert('Failed to delete user.');
       }
     }
 
