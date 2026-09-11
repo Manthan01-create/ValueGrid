@@ -122,13 +122,15 @@ function buildEmailHTML(otp) {
 
 // ─── Password Reset Email (OTP code) ───────────────────────
 function buildPasswordResetHTML(otp) {
-  const templatePath = path.join(__dirname, 'valuegrid-password-reset-mail.html');
+  const templatePath = path.join(__dirname, 'FGpass.html');
   let html = fs.readFileSync(templatePath, 'utf-8');
-  // The template renders each OTP digit in its own box ({{D1}}..{{D6}}).
+  // The template renders each OTP digit in its own box ({{OTP_DIGIT_1}}..{{OTP_DIGIT_6}}).
   String(otp).padStart(6, '0').split('').forEach((digit, i) => {
-    html = html.replace(`{{D${i + 1}}}`, digit);
+    html = html.replace(`{{OTP_DIGIT_${i + 1}}}`, digit);
   });
   html = html.replace('{{OTP}}', otp.split('').join(' '));
+  html = html.replace('{{EXPIRY_TIME_MINUTES}}', String(10));
+  html = html.replace('{{CURRENT_YEAR}}', String(new Date().getFullYear()));
   html = html.replace('http://localhost:3000', PUBLIC_URL);
   return html;
 }

@@ -32,11 +32,13 @@ const mails = [
     name: '2. Password Reset',
     subject: 'Your OTP for Password Reset',
     html: (() => {
-      let h = read('valuegrid-password-reset-mail.html');
+      let h = read('FGpass.html');
       const sixDigits = String(crypto.randomInt(1, 1000000)).padStart(6, '0');
       sixDigits.split('').forEach((d, i) => {
-        h = h.replace(`{{D${i + 1}}}`, d);
+        h = h.replace(`{{OTP_DIGIT_${i + 1}}}`, d);
       });
+      h = h.replace('{{EXPIRY_TIME_MINUTES}}', '10');
+      h = h.replace('{{CURRENT_YEAR}}', String(new Date().getFullYear()));
       return h;
     })(),
   },
